@@ -5,7 +5,9 @@ export class CreateBlogDto {
 }
 
 export class UpdateBlogDto {
-  email: string;
+  name: string;
+  description: string;
+  websiteUrl: string;
 }
 
 //              DTO4/ws/presentation

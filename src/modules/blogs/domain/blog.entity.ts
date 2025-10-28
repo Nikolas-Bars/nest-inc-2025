@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { CreateBlogDomainDto } from './dto/create-blog.domain.dto';
+import { UpdateBlogDto } from '../dto/create-blog.dto';
 
 //флаг timestemp автоматичеки добавляет поля upatedAt и createdAt
 @Schema({ timestamps: true })
@@ -46,6 +47,17 @@ export class Blog {
       throw new Error('Entity already deleted');
     }
     this.deletedAt = new Date();
+  }
+  update(dto: UpdateBlogDto) {
+    if(dto.name) {
+      this.name = dto.name;
+    }
+    if(dto.description) {
+      this.description = dto.description;
+    }
+    if(dto.websiteUrl) {
+      this.websiteUrl = dto.websiteUrl;
+    }
   }
 }
 
