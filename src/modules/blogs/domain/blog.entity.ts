@@ -18,7 +18,7 @@ export class Blog {
   createdAt: Date;
   updatedAt: Date;
 
-  @Prop({ type: Date, nullable: true })
+  @Prop({ type: Date, nullable: true, default: null })
   deletedAt: Date | null;
 
   @Prop({ type: Boolean, default: false })
@@ -43,7 +43,8 @@ export class Blog {
 
   //DDD сontinue: инкапсуляция (вызываем методы, которые меняют состояние\св-ва) объектов согласно правилам этого объекта
   makeDeleted() {
-    if (this.deletedAt !== null) {
+    console.log(this.deletedAt, 'this.deletedAt');
+    if (this.deletedAt) {
       throw new Error('Entity already deleted');
     }
     this.deletedAt = new Date();

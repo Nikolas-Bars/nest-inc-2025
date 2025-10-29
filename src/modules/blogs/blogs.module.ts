@@ -5,13 +5,14 @@ import { BlogsController } from './api/blogs.controller';
 import { Blog, BlogSchema } from './domain/blog.entity';
 import { BlogsRepository } from './infrastructure/blogs.repository';
 import { BlogsService } from './application/blogs.service';
+import { BlogsExternalService } from './application/blogs-external.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
   ],
   controllers: [BlogsController],
-  providers: [BlogsQueryRepository, BlogsRepository, BlogsService],
-  exports: [],
+  providers: [BlogsQueryRepository, BlogsRepository, BlogsService, BlogsExternalService],
+  exports: [BlogsExternalService],
 })
 export class BlogsModule {}

@@ -25,7 +25,7 @@ export class User {
   createdAt: Date;
   updatedAt: Date;
 
-  @Prop({ type: Date, nullable: true })
+  @Prop({ type: Date, nullable: true, default: null })
   deletedAt: Date | null;
 
   //если ипсльзуете по всей системе шв айди как string, можете юзать, если id
@@ -52,7 +52,7 @@ export class User {
 
   //DDD сontinue: инкапсуляция (вызываем методы, которые меняют состояние\св-ва) объектов согласно правилам этого объекта
   makeDeleted() {
-    if (this.deletedAt !== null) {
+    if (this.deletedAt) {
       throw new Error('Entity already deleted');
     }
     this.deletedAt = new Date();

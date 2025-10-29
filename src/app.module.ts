@@ -7,6 +7,7 @@ import { TestingModule } from './modules/testing/testing.module';
 import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-platform.module';
 import { CoreModule } from './core/core.module';
 import { BlogsModule } from './modules/blogs/blogs.module';
+import { PostsModule } from './modules/posts/post.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { BlogsModule } from './modules/blogs/blogs.module';
     BloggersPlatformModule,
     CoreModule,
     BlogsModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
