@@ -7,7 +7,6 @@ import { Post } from '../../domain/post.entity';
 import type { PostModelType } from '../../domain/post.entity';
 import { PostViewDto } from '../../api/view-dto/posts.view-dto';
 import { GetPostsQueryParams } from '../../api/input-dto/get-posts-query-params.input-dto';
-
 @Injectable()
 export class PostsQueryRepository {
   constructor(

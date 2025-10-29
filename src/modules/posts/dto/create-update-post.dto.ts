@@ -7,11 +7,11 @@ export class CreatePostDto {
 }
 
 export class UpdatePostDto {
-  title: string;
-  shortDescription: string;
-  content: string;
+  title?: string;
+  shortDescription?: string;
+  content?: string;
   blogId: string;
-  blogName: string;
+  blogName?: string;
 }
 
 //              DTO4/ws/presentation
