@@ -16,12 +16,16 @@ import { PostsService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { GetPostsQueryParams } from './input-dto/get-posts-query-params.input-dto';
 import { UpdatePostDto } from '../dto/create-update-post.dto';
+import { CommentsQueryRepository } from '../../comments/infrastructure/query/comments.query-repository';
+import { GetCommentsQueryParams } from '../../comments/api/input-dto/get-comments-query-params.input-dto';
+import { CommentViewDto } from '../../comments/api/view-dto/comment.view-dto';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private postsQueryRepository: PostsQueryRepository,
     private postsService: PostsService,
+    private commentsQueryRepository: CommentsQueryRepository,
   ) {
     console.log('PostsController created');
   }
@@ -35,7 +39,17 @@ export class PostsController {
   async getPost(@Param('id') id: string): Promise<PostViewDto> {
     return await this.postsQueryRepository.findPostByIdOrFail(id)
   }
+  @Get(':id/comments')
+  async getCommentsByPostId(
+    @Param('id') id: string,
+    @Query() query: GetCommentsQueryParams,
+  ): Promise<PaginatedViewDto<CommentViewDto[]>> {
 
+    await this.postsQueryRepository.findPostByIdOrFail(id);
+
+    return this.commentsQueryRepository.getCommentsByPostId(id, query)
+
+  }
   @Post()
   async create(@Body() body: CreatePostInputDto): Promise<PostViewDto> {
     const newPostId = await this.postsService.createPost(body);

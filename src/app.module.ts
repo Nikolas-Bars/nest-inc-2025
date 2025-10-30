@@ -8,6 +8,7 @@ import { BloggersPlatformModule } from './modules/bloggers-platform/bloggers-pla
 import { CoreModule } from './core/core.module';
 import { BlogsModule } from './modules/blogs/blogs.module';
 import { PostsModule } from './modules/posts/post.module';
+import { CommentsModule } from './modules/comments/comments.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PostsModule } from './modules/posts/post.module';
     BloggersPlatformModule,
     CoreModule,
     BlogsModule,
+    CommentsModule,
     PostsModule,
   ],
   controllers: [AppController],
