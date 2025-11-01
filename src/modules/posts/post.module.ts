@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Post, PostSchema } from './domain/post.entity';
 import { PostsController } from './api/posts.controller';
@@ -7,10 +7,12 @@ import { PostsRepository } from './infrastructure/posts.repository';
 import { PostsQueryRepository } from './infrastructure/query/posts.query-repository';
 import { BlogsModule } from '../blogs/blogs.module';
 import { CommentsModule } from '../comments/comments.module';
+import { PostsQueryExternalRepository } from './infrastructure/external-query/posts.query-external-repository';
+import { PostsExternalService } from './application/posts.external-service';
 
 @Module({
   imports: [
-    BlogsModule,
+    forwardRef(() => BlogsModule),
     CommentsModule,
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
   ],
@@ -19,7 +21,9 @@ import { CommentsModule } from '../comments/comments.module';
     PostsService,
     PostsRepository,
     PostsQueryRepository,
+    PostsQueryExternalRepository,
+    PostsExternalService
   ],
-  exports: [],
+  exports: [PostsQueryExternalRepository, PostsExternalService],
 })
 export class PostsModule {}
