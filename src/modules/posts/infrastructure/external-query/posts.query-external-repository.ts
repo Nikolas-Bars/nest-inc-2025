@@ -27,7 +27,7 @@ export class PostsQueryExternalRepository {
 
     const totalCount = await this.PostModel.countDocuments(filter);
 
-    const items = posts.map(PostViewDto.mapToView);
+    const items = posts.map(PostsViewExternalDto.mapToView);
 
     return PaginatedViewDto.mapToView({
       items,

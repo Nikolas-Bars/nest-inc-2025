@@ -19,8 +19,7 @@ export class PostsViewExternalDto {
     dto.blogName = post.blogName
     dto.title = post.title
     dto.content = post.content
-    dto.extendedLikesInfo = { ...post.extendedLikesInfo }
-    dto.extendedLikesInfo.newestLikes = { ...post.extendedLikesInfo.newestLikes }
+    dto.extendedLikesInfo = { ...post.extendedLikesInfo, newestLikes: [ ...post.extendedLikesInfo.newestLikes ] }
     dto.createdAt = post.createdAt
     dto.shortDescription = post.shortDescription
 

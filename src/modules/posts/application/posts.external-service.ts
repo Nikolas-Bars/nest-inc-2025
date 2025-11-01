@@ -21,7 +21,7 @@ export class PostsExternalService {
     private postsQueryExternalRepository: PostsQueryExternalRepository
   ) {}
 
-  async createPostForBlog(blogId: string, dto: CreatePostExternalServiceDto): Promise<PostsViewExternalDto> {
+  async createPostForBlog(dto: CreatePostExternalServiceDto): Promise<PostsViewExternalDto> {
 
     const post = this.postModel.createInstance(dto)
 

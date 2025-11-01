@@ -56,21 +56,18 @@ export class BlogsController {
     return this.blogsQueryRepository.getBlogByIdOrFail(newBlogId);
   }
 
-  @Post(':id/posts/')
+  @Post(':blogId/posts')
   @ApiParam({ name: 'blogId' })
-  async createPostForBlog(@Body() body: CreatePostExternalInputDto, @Param('id') id: string): Promise<PostsViewExternalDto> {
-    const blog = await this.blogsQueryRepository.getBlogByIdOrFail(id);
+  async createPostForBlog(@Body() body: CreatePostExternalInputDto, @Param('blogId') blogId: string): Promise<PostsViewExternalDto> {
+    const blog = await this.blogsQueryRepository.getBlogByIdOrFail(blogId);
 
     const postCreateData: CreatePostExternalServiceDto = {
       ...body,
-      blogId: id,
+      blogId: blogId,
       blogName: blog.name,
     };
 
-    return await this.postsExternalService.createPostForBlog(
-      id,
-      postCreateData,
-    );
+    return await this.postsExternalService.createPostForBlog(postCreateData);
   }
 
   @Put(':id')
