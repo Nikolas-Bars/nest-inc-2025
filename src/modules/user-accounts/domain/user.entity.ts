@@ -57,7 +57,9 @@ export class User {
     }
     this.deletedAt = new Date();
   }
-
+  setConfirmationCode(code: string) {
+    //logic
+  }
   //DDD сontinue: инкапсуляция (вызываем методы, которые меняют состояние\св-ва) объектов согласно правилам этого объекта
   update(dto: UpdateUserDto) {
     if (dto.email !== this.email) {

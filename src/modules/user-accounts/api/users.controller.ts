@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { UsersQueryRepository } from '../infrastructure/query/users.query-repository';
 import { UserViewDto } from './view-dto/users.view-dto';
@@ -18,6 +19,7 @@ import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
 import { ApiParam } from '@nestjs/swagger';
 import { UpdateUserInputDto } from './input-dto/update-user.input-dto';
 import { GetUsersQueryParams } from './input-dto/get-users-query-params.input-dto';
+import { CreateUserPipe } from './pipes/create.user.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -44,6 +46,7 @@ export class UsersController {
   }
 
   @Post()
+  @UsePipes(CreateUserPipe)
   async createUser(@Body() body: CreateUserInputDto): Promise<UserViewDto> {
     const userId = await this.usersService.createUser(body);
 

@@ -2,7 +2,7 @@
 import { IsEmail, IsString, Length } from 'class-validator';
 import { IsStringWithTrim } from '../../../../core/decorators/is-string-with-trim';
 
-export class CreateUserInputDto {
+export class RegistrationInputDto {
   @IsStringWithTrim(4, 10)
   login: string;
 

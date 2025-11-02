@@ -29,4 +29,20 @@ export class UsersRepository {
 
     return user;
   }
+
+  async checkByLoginOrEmail(loginOrEmail: string): Promise<boolean> {
+    const user = await this.UserModel.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
+
+    return !!user;
+  }
+
+  async isUserExists(email: string, login: string): Promise<boolean>  {
+    const user = await this.UserModel.findOne({
+      $or: [{ login: login }, { email: email }],
+    });
+
+    return !!user;
+  }
 }

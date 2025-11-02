@@ -20,4 +20,8 @@ export class UsersExternalService {
 
     await this.usersRepository.save(user);
   }
+
+  async checkExistenceOfUser(email: string, login: string): Promise<boolean> {
+    return await this.usersRepository.isUserExists(email, login);
+  }
 }

@@ -5,6 +5,7 @@ import type { UserModelType } from '../domain/user.entity';
 import { CreateUserDto, UpdateUserDto } from '../dto/create-user.dto';
 import bcrypt from 'bcrypt';
 import { UsersRepository } from '../infrastructure/users.repository';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -47,5 +48,19 @@ export class UsersService {
     user.makeDeleted();
 
     await this.usersRepository.save(user);
+  }
+
+  async registerUser(dto: CreateUserDto) {
+    const createdUserId = await this.createUser(dto)
+
+    const confirmCode = 'uuid';
+
+    const user = await this.usersRepository.findOrNotFoundFail(createdUserId);
+
+    user.setConfirmationCode(confirmCode);
+  }
+
+  async checkExistenceOfUser(email: string, login: string): Promise<boolean> {
+    return await this.usersRepository.isUserExists(email, login);
   }
 }

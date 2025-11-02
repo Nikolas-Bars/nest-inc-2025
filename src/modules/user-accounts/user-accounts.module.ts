@@ -11,6 +11,7 @@ import { AuthQueryRepository } from './infrastructure/query/auth.query-repositor
 import { SecurityDevicesController } from './api/security-devices.controller';
 import { UsersExternalQueryRepository } from './infrastructure/external-query/users.external-query-repository';
 import { UsersExternalService } from './application/users.external-service';
+import { CreateUserPipe } from './api/pipes/create.user.pipe';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersExternalService } from './application/users.external-service';
     UsersService,
     UsersRepository,
     UsersQueryRepository,
+    CreateUserPipe,
     SecurityDevicesQueryRepository,
     AuthQueryRepository,
     UsersExternalQueryRepository,

@@ -9,6 +9,7 @@ import { CoreModule } from './core/core.module';
 import { BlogsModule } from './modules/blogs/blogs.module';
 import { PostsModule } from './modules/posts/post.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CommentsModule } from './modules/comments/comments.module';
     BlogsModule,
     CommentsModule,
     PostsModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
