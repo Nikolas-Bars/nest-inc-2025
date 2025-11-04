@@ -3,8 +3,11 @@ import { EmailExternalService } from '../../email/application/email-external.ser
 import { RegistrationInputDto } from '../api/input-dto/registration.input-dto';
 import { RegisterUserDto } from '../dto/register.user.dto';
 import bcrypt from 'bcrypt';
+import {v1} from "uuid";
+import add from "date-fns/add"
 import { CreateUserDto } from '../../user-accounts/dto/create-user.dto';
 import { UsersExternalService } from '../../user-accounts/application/users.external-service';
+import { SendEmailType } from '../../email/email.types';
 
 @Injectable()
 export class AuthService {
@@ -19,13 +22,34 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(body.password, salt)
 
+    const confirmationCode = v1()
+
     const user: CreateUserDto = {
       login: body.login,
       email: body.email,
       password: passwordHash,
       salt: salt,
+      emailConfirmation: {
+        // confirmationCode - код который уйдет пользователю
+        confirmationCode,
+        // expirationDate - дата когда код устареет
+        expirationDate: add.add(new Date(), {
+          hours: 1,
+          minutes: 30
+        }),
+        isConfirmed: false
+      }
     }
 
-    return this.userExternalService.registrationUser(user)
+    await this.userExternalService.registrationUser(user)
+
+    const msgData: SendEmailType & { code: string } = {
+      path: body.email,
+      msg: '',
+      subject: 'Подтверждение регистрации!!!!!!!',
+      code: confirmationCode
+    };
+
+    return await this.emailExternalService.sendEmailConfirmationMassage(msgData);
   }
 }

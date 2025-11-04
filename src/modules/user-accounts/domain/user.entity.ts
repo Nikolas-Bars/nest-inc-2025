@@ -3,7 +3,7 @@ import { HydratedDocument, Model } from 'mongoose';
 import { UpdateUserDto } from '../dto/create-user.dto';
 import { CreateUserDomainDto } from './dto/create-user.domain.dto';
 import { Name, NameSchema } from './name.schema';
-import { Optional } from '@nestjs/common';
+import type { EmailConfirmationType } from '../types/email-confirmation.type';
 
 //флаг timestemp автоматичеки добавляет поля upatedAt и createdAt
 @Schema({ timestamps: true })
@@ -23,9 +23,17 @@ export class User {
   @Prop({ type: NameSchema })
   name: Name;
 
-  @Prop()
-  @Optional()
+  @Prop({ type: String, nullable: true, default: null })
   salt: string;
+
+  // Стрелочная функция создаёт новый объект для каждого документа, чтобы избежать проблем с мутациями
+  @Prop({ type: Object, nullable: true, default: () => ({
+      confirmationCode: null,
+      expirationDate: null,
+      isConfirmed: false,
+    })})
+
+  emailConfirmation: EmailConfirmationType;
 
   createdAt: Date;
   updatedAt: Date;
@@ -46,6 +54,7 @@ export class User {
     user.passwordHash = dto.passwordHash;
     user.login = dto.login;
     user.isEmailConfirmed = false; // пользователь ВСЕГДА должен после регистрации подтверждить свой Email
+    user.emailConfirmation = dto.emailConfirmation || null
 
     user.name = {
       firstName: 'firstName xxx',

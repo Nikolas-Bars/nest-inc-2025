@@ -1,7 +1,10 @@
+import { EmailConfirmationType } from '../types/email-confirmation.type';
+
 export class CreateUserDto {
   login: string;
   email: string;
   password: string;
+  emailConfirmation?: EmailConfirmationType
   salt?: string;
 }
 

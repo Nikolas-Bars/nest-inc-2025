@@ -8,6 +8,7 @@ import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthExternalService } from './application/auth-external.service';
 import { EmailModule } from '../email/email.module';
+import { ConfirmCodePipe } from './api/pipes/confirm-code.pipe';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { EmailModule } from '../email/email.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthExternalService, JwtStrategy],
+  providers: [AuthService, AuthExternalService, JwtStrategy, ConfirmCodePipe],
   exports: [AuthExternalService], // публичный фасад
 })
 export class AuthModule {}
