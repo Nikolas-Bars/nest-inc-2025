@@ -34,18 +34,18 @@ export class UsersQueryRepository {
     const filter: FilterQuery<User> = {
       deletedAt: null,
     };
-
-    if (query.searchLoginTerm) {
+    console.log(query.login);
+    if (query.login) {
       filter.$or = filter.$or || [];
       filter.$or.push({
-        login: { $regex: query.searchLoginTerm, $options: 'i' },
+        login: { $regex: query.login, $options: 'i' },
       });
     }
 
-    if (query.searchEmailTerm) {
+    if (query.email) {
       filter.$or = filter.$or || [];
       filter.$or.push({
-        email: { $regex: query.searchEmailTerm, $options: 'i' },
+        email: { $regex: query.email, $options: 'i' },
       });
     }
 

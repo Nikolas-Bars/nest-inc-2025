@@ -7,11 +7,13 @@ import { AuthService } from './application/auth.service';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthExternalService } from './application/auth-external.service';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
     forwardRef(() => UserAccountsModule),
     PassportModule,
+    EmailModule,
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.JWT_ACCESS_SECRET,

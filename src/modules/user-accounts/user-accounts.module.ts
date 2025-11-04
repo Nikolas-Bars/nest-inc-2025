@@ -7,7 +7,6 @@ import { UsersRepository } from './infrastructure/users.repository';
 import { UsersQueryRepository } from './infrastructure/query/users.query-repository';
 import { AuthController } from './api/auth.controller';
 import { SecurityDevicesQueryRepository } from './infrastructure/query/security-devices.query-repository';
-import { AuthQueryRepository } from './infrastructure/query/auth.query-repository';
 import { SecurityDevicesController } from './api/security-devices.controller';
 import { UsersExternalQueryRepository } from './infrastructure/external-query/users.external-query-repository';
 import { UsersExternalService } from './application/users.external-service';
@@ -24,7 +23,6 @@ import { CreateUserPipe } from './api/pipes/create.user.pipe';
     UsersQueryRepository,
     CreateUserPipe,
     SecurityDevicesQueryRepository,
-    AuthQueryRepository,
     UsersExternalQueryRepository,
     UsersExternalService,
   ],

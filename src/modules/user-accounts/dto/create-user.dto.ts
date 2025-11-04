@@ -2,6 +2,7 @@ export class CreateUserDto {
   login: string;
   email: string;
   password: string;
+  salt?: string;
 }
 
 export class UpdateUserDto {
