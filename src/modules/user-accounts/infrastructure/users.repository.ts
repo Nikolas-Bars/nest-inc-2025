@@ -38,6 +38,10 @@ export class UsersRepository {
     return !!user;
   }
 
+  async getByConfirmCode(code: string): Promise<UserDocument | null> {
+      return this.UserModel.findOne({ 'emailConfirmation.confirmationCode': code });
+  }
+
   async isUserExists(email: string, login: string): Promise<boolean>  {
     const user = await this.UserModel.findOne({
       $or: [{ login: login }, { email: email }],

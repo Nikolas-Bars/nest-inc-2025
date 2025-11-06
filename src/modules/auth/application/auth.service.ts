@@ -52,4 +52,8 @@ export class AuthService {
 
     return await this.emailExternalService.sendEmailConfirmationMassage(msgData);
   }
+
+  async confirmCode(code: string) {
+    await this.userExternalService.confirmationCode(code)
+  }
 }

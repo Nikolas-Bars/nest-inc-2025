@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
@@ -11,7 +11,7 @@ import { UserExternalDto } from '../infrastructure/external-query/external-dto/u
 @Injectable()
 export class UsersExternalService {
   constructor(
-    //инжектирование модели в сервис через DI
+    // инжектирование модели в сервис через DI
     @InjectModel(User.name)
     private UserModel: UserModelType,
     private usersRepository: UsersRepository,
@@ -49,5 +49,16 @@ export class UsersExternalService {
 
   async checkUserByConfirmCode(code: string): Promise<UserExternalDto | null> {
     return this.usersQueryRepository.findByConfirmCode(code);
+  }
+
+  async confirmationCode(code: string) {
+    const user = await this.usersRepository.getByConfirmCode(code)
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    console.log(333, user);
+    user.confirmEmail();
+    await this.usersRepository.save(user);
   }
 }

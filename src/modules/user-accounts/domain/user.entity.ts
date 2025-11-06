@@ -81,6 +81,23 @@ export class User {
       this.email = dto.email;
     }
   }
+  confirmEmail() {
+    console.log(111);
+    if (this.emailConfirmation?.isConfirmed) {
+      throw new Error('Email already confirmed');
+    }
+    if (this.emailConfirmation?.expirationDate && this.emailConfirmation.expirationDate < new Date()) {
+      throw new Error('Confirmation code expired');
+    }
+
+    this.isEmailConfirmed = true;
+    if (this.emailConfirmation) {
+      this.emailConfirmation = {
+        ...this.emailConfirmation,
+        isConfirmed: true,
+      }
+    }
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
