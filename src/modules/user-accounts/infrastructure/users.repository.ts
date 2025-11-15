@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
+import { User, UserDocument } from '../domain/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
@@ -36,6 +36,12 @@ export class UsersRepository {
     });
 
     return !!user;
+  }
+
+  async getByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
   }
 
   async getByConfirmCode(code: string): Promise<UserDocument | null> {

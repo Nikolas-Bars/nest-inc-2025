@@ -18,6 +18,10 @@ export class UsersExternalService {
     private usersQueryRepository: UsersExternalQueryRepository,
   ) {}
 
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
+    return await this.usersRepository.getByLoginOrEmail(loginOrEmail);
+  }
+
   async makeUserAsSpammer(userId: string) {
     const user = await this.usersRepository.findOrNotFoundFail(userId);
 

@@ -9,6 +9,7 @@ export function pipesSetup(app: INestApplication) {
       //соответственно применятся значения по-умолчанию
       //и методы классов dto
       transform: true,
+      stopAtFirstError: true, // Останавливаться на первой ошибке для каждого поля
     }),
   );
 }

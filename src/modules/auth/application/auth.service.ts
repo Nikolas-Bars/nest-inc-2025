@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { EmailExternalService } from '../../email/application/email-external.service';
 import { RegistrationInputDto } from '../api/input-dto/registration.input-dto';
 import { RegisterUserDto } from '../dto/register.user.dto';
@@ -8,12 +8,16 @@ import add from "date-fns/add"
 import { CreateUserDto } from '../../user-accounts/dto/create-user.dto';
 import { UsersExternalService } from '../../user-accounts/application/users.external-service';
 import { SendEmailType } from '../../email/email.types';
+import { LoginInputDto } from '../api/input-dto/login.input.dto';
+import { UserContextDto } from './user-context.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private emailExternalService: EmailExternalService,
     private userExternalService: UsersExternalService,
+    private jwtService: JwtService,
   ) {}
 
   async registerUser(body: RegisterUserDto) {
@@ -55,5 +59,42 @@ export class AuthService {
 
   async confirmCode(code: string) {
     await this.userExternalService.confirmationCode(code)
+  }
+
+  async login(userId: string) {
+    const payload = { sub: userId, bla: 'blabla' }; // sub (subject) — стандартное поле JWT для userId
+
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: '15m',
+      secret: process.env.JWT_ACCESS_SECRET || 'secret',
+    });
+
+    return {
+      accessToken,
+    };
+  }
+
+  async checkPassword(password: string, passwordHash: string): Promise<boolean> {
+    return await bcrypt.compare(password, passwordHash);
+  }
+
+  // Проверка логина/пароля (используется в LocalStrategy)
+  async validateUser(data: LoginInputDto): Promise<UserContextDto | null> {
+    const user = await this.userExternalService.findByLoginOrEmail(data.loginOrEmail);
+
+    if (!user) {
+      return null;
+    }
+
+    const isPasswordValid = await bcrypt.compare(data.password, user.passwordHash);
+
+    if (!isPasswordValid) {
+      return null;
+    }
+
+    return {
+      userId: user.id,
+      login: user.login,
+    };
   }
 }
