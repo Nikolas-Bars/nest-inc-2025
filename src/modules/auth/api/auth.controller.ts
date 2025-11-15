@@ -19,6 +19,7 @@ import { UserContextDto } from '../application/user-context.dto';
 import { JwtAuthGuard } from '../infrastructure/guards/jwt-auth.guard';
 import { LoginInputDto } from './input-dto/login.input.dto';
 import { ConfirmationEmailInputDto } from '../dto/confirmation.email.input.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -66,6 +67,7 @@ export class AuthController {
 
   @HttpCode(204)
   @Post('registration-confirmation')
+  @Throttle({ default: { limit: 3, ttl: 10000 } })
   @UseGuards(JwtAuthGuard)
   async confirmationCode(@Query() query: ConfirmationEmailInputDto) {
     // ValidationPipe автоматически проверит query.code
