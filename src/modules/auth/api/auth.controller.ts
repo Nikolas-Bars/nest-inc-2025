@@ -14,11 +14,11 @@ import {
 import type { Response } from 'express';
 import { RegistrationInputDto } from './input-dto/registration.input-dto';
 import { AuthService } from '../application/auth.service';
-import { ConfirmCodePipe } from './pipes/confirm-code.pipe';
 import { ExtractUserFromRequest } from '../decorators/extract-user-from-request.decorator';
 import { UserContextDto } from '../application/user-context.dto';
 import { JwtAuthGuard } from '../infrastructure/guards/jwt-auth.guard';
 import { LoginInputDto } from './input-dto/login.input.dto';
+import { ConfirmationEmailInputDto } from '../dto/confirmation.email.input.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -67,8 +67,9 @@ export class AuthController {
   @HttpCode(204)
   @Post('registration-confirmation')
   @UseGuards(JwtAuthGuard)
-  async confirmationCode(@Query('code', ConfirmCodePipe) code: string) {
-    await this.authService.confirmCode(code);
+  async confirmationCode(@Query() query: ConfirmationEmailInputDto) {
+    // ValidationPipe автоматически проверит query.code
+    await this.authService.confirmCode(query.code);
   }
 
   // Тестовый защищённый маршрут для проверки JWT

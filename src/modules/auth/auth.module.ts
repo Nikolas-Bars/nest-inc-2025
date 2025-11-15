@@ -7,7 +7,6 @@ import { AuthService } from './application/auth.service';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { AuthExternalService } from './application/auth-external.service';
 import { EmailModule } from '../email/email.module';
-import { ConfirmCodePipe } from './api/pipes/confirm-code.pipe';
 import { LocalStrategy } from './infrastructure/strategies/local.strategy';
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
 
@@ -24,7 +23,7 @@ import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthExternalService, JwtStrategy, LocalStrategy, ConfirmCodePipe],
+  providers: [AuthService, AuthExternalService, JwtStrategy, LocalStrategy],
   exports: [AuthExternalService], // публичный фасад
 })
 export class AuthModule {}

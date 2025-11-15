@@ -4,6 +4,7 @@ import { UpdateUserDto } from '../dto/create-user.dto';
 import { CreateUserDomainDto } from './dto/create-user.domain.dto';
 import { Name, NameSchema } from './name.schema';
 import type { EmailConfirmationType } from '../types/email-confirmation.type';
+import { BadRequestException } from '@nestjs/common';
 
 //флаг timestemp автоматичеки добавляет поля upatedAt и createdAt
 @Schema({ timestamps: true })
@@ -84,10 +85,10 @@ export class User {
   confirmEmail() {
     console.log(111);
     if (this.emailConfirmation?.isConfirmed) {
-      throw new Error('Email already confirmed');
+      throw new BadRequestException(['code already been applied']);
     }
     if (this.emailConfirmation?.expirationDate && this.emailConfirmation.expirationDate < new Date()) {
-      throw new Error('Confirmation code expired');
+      throw new BadRequestException(['code is expired']);
     }
 
     this.isEmailConfirmed = true;

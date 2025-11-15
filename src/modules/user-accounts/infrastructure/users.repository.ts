@@ -2,6 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import type { UserModelType } from '../domain/user.entity';
 import { User, UserDocument } from '../domain/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfirmationEmailInputDto } from '../../auth/dto/confirmation.email.input.dto';
 
 @Injectable()
 export class UsersRepository {

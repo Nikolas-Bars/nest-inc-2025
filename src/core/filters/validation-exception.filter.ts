@@ -18,6 +18,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     if (Array.isArray(exceptionResponse.message)) {
       const errorsMessages = exceptionResponse.message.map((msg: string) => {
         // Парсим сообщение вида "field must be ..."
+        console.log(msg, 'msg');
         const field = msg.split(' ')[0];
         return {
           message: msg,

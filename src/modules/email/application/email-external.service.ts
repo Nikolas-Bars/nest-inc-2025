@@ -14,7 +14,8 @@ export class EmailExternalService {
         pass: 'zsskjnikysdkmzhf',
       }
     })
-
+    const a = transport.verify()
+    console.log(a, 'a');
     const info = await transport.sendMail({
       from: '"Nikolas Bars" <docum.magic0@gmail.com>',
       to: msgData.path,
@@ -27,7 +28,7 @@ export class EmailExternalService {
 
   async sendEmailConfirmationMassage(msgData: SendEmailType & { code: string }) {
 
-    const message = ` <h1>Thanks for your registration</h1><a href=\'https://blog-t57v.onrender.com/registration-confirmation?code=${msgData.code}\'>complete registration</a>`
+    const message = `<h1>Thanks for your registration</h1><a href=\'https://blog-t57v.onrender.com/registration-confirmation?code=${msgData.code}\'>complete registration</a>`
 
     return await this.sendMessage({ ...msgData, msg: message})
 
