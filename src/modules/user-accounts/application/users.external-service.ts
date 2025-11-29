@@ -61,7 +61,7 @@ export class UsersExternalService {
     if (!user) {
       throw new NotFoundException('user not found');
     }
-    console.log(333, user);
+
     user.confirmEmail();
     await this.usersRepository.save(user);
   }

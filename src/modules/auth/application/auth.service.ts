@@ -61,9 +61,9 @@ export class AuthService {
     await this.userExternalService.confirmationCode(code)
   }
 
-  async login(userId: string) {
-    const payload = { sub: userId, bla: 'blabla' }; // sub (subject) — стандартное поле JWT для userId
-
+  async login(userId: string, email: string, login: string) {
+    const payload = { sub: userId, email, login }; // sub (subject) — стандартное поле JWT для userId
+    console.log(payload, 'payload');
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: '15m',
       secret: process.env.JWT_ACCESS_SECRET || 'secret',
@@ -102,25 +102,20 @@ export class AuthService {
 
   async checkRecoveryCode(code: string, password: string): Promise<void> {
     const user = await this.userExternalService.getUserByRecoveryCode(code);
-    console.log(111);
     if (!user) {
       return; // Всегда возвращаем успех для безопасности
     }
-    console.log(222);
     const expirationDate = user.emailConfirmation?.expirationDate || null;
 
     // Проверяем, что код не истёк
     if (!expirationDate || expirationDate < new Date()) {
       return; // Код истёк, но возвращаем успех для безопасности
     }
-    console.log(333);
     // Создаём новый хэш пароля
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
-    console.log(444);
     // Обновляем пароль через метод entity (DDD подход)
     user.updatePassword(passwordHash, salt);
-    console.log(555);
     // Сохраняем изменения
     await this.userExternalService.save(user);
   }
@@ -142,6 +137,40 @@ export class AuthService {
     return {
       userId: user.id,
       login: user.login,
+      email: user.email,
     };
+  }
+
+  async resendConfirmationCode(email: string): Promise<void> {
+
+    const user = await this.userExternalService.findByLoginOrEmail(email)
+
+    if (user && user.emailConfirmation) {
+
+      const newCode = v1()
+
+      const newExpirationDate = add(new Date(), {
+        minutes: 3
+      });
+
+      const isConfirmed = user.emailConfirmation.isConfirmed
+
+      if (isConfirmed) return // если email уже подтвержден
+
+      // если не подтвержден - отправляем письмо заново
+
+      user.setConfirmationCode(newCode, newExpirationDate);
+
+      await this.userExternalService.save(user);
+
+      const msgData: SendEmailType & { code: string } = {
+        path: email,
+        msg: '',
+        subject: 'Подтверждение регистрации!!! ПОВТОРНО ЕПТА!',
+        code: newCode
+      };
+
+      await this.emailExternalService.sendEmailConfirmationMassage(msgData);
+    }
   }
 }

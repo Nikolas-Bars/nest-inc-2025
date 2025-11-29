@@ -30,7 +30,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     // Этот объект попадёт в req.user
     return {
       userId: payload.sub,
-      login: payload.bla || '', // смотря что добавлял в payload при login()
+      login: payload.login, // смотря что добавлял в payload при login()
+      email: payload.email, // смотря что добавлял в payload при login()
     };
   }
 }
