@@ -9,8 +9,8 @@ export class GetUsersQueryParams extends BaseQueryParams {
   sortBy = UsersSortBy.CreatedAt;
   @IsString()
   @IsOptional()
-  searchLoginTerm: string | null = null;
+  login: string | null = null;
   @IsString()
   @IsOptional()
-  searchEmailTerm: string | null = null;
+  email: string | null = null;
 }

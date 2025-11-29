@@ -7,7 +7,7 @@ export class RegistrationInputDto {
   login: string;
 
   @IsString()
-  @Length(6, 10)
+  @Length(6, 20)
   password: string;
 
   @IsString()

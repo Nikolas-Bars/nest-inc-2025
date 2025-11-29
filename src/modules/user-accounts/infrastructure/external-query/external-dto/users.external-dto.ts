@@ -1,4 +1,5 @@
 import { UserDocument } from '../../../domain/user.entity';
+import { EmailConfirmationType } from '../../../types/email-confirmation.type';
 
 export class UserExternalDto {
   id: string;
@@ -7,6 +8,7 @@ export class UserExternalDto {
   createdAt: Date;
   firstName: string;
   lastName: string | null;
+  emailConfirmation?: EmailConfirmationType
 
   static mapToView(user: UserDocument): UserExternalDto {
     const dto = new UserExternalDto();
@@ -17,6 +19,7 @@ export class UserExternalDto {
     dto.createdAt = user.createdAt;
     dto.firstName = user.name.firstName;
     dto.lastName = user.name.lastName;
+    dto.emailConfirmation = user.emailConfirmation
 
     return dto;
   }

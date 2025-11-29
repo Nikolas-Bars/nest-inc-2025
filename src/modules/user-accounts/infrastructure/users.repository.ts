@@ -1,7 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
+import { User, UserDocument } from '../domain/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfirmationEmailInputDto } from '../../auth/dto/confirmation.email.input.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -16,6 +17,11 @@ export class UsersRepository {
   }
 
   async save(user: UserDocument) {
+    // // Явно указываем Mongoose, что вложенный объект emailConfirmation был изменён
+    // // Это необходимо, т.к. Mongoose не всегда отслеживает изменения вложенных объектов типа Object
+    // if (user.isModified('emailConfirmation') || user.emailConfirmation) {
+    //   user.markModified('emailConfirmation');
+    // }
     await user.save();
   }
 
@@ -36,6 +42,16 @@ export class UsersRepository {
     });
 
     return !!user;
+  }
+
+  async getByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
+    return this.UserModel.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
+  }
+
+  async getByConfirmCode(code: string): Promise<UserDocument | null> {
+      return this.UserModel.findOne({ 'emailConfirmation.confirmationCode': code });
   }
 
   async isUserExists(email: string, login: string): Promise<boolean>  {
