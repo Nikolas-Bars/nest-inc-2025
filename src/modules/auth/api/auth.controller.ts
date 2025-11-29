@@ -21,6 +21,7 @@ import { LoginInputDto } from './input-dto/login.input.dto';
 import { ConfirmationEmailInputDto } from '../dto/confirmation.email.input.dto';
 import { Throttle } from '@nestjs/throttler';
 import { RecoveryInputDto } from './input-dto/recovery.input.dto';
+import { NewPasswordInputDto } from './input-dto/new-password.input.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -83,6 +84,13 @@ export class AuthController {
     // Throttle ограничит до 5 попыток за 10 секунд (429 если превышен)
     // Всегда возвращает 204, даже если email не зарегистрирован (для безопасности)
     await this.authService.passwordRecovery(body.email);
+  }
+
+  @HttpCode(204)
+  @Post("/new-password")
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  async newPassword(@Body() body: NewPasswordInputDto) {
+    await this.authService.checkRecoveryCode(body.recoveryCode, body.newPassword);
   }
 
   // Тестовый защищённый маршрут для проверки JWT

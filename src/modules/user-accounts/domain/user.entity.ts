@@ -78,19 +78,13 @@ export class User {
     this.deletedAt = new Date();
   }
   setConfirmationCode(code: string, exp?: Date) {
-    if (!this.emailConfirmation) {
-      this.emailConfirmation = {
-        confirmationCode: null,
-        expirationDate: null,
-        isConfirmed: false,
-      };
-    }
-
-    this.emailConfirmation.confirmationCode = code;
-
-    if (exp) {
-      this.emailConfirmation.expirationDate = exp;
-    }
+    // Создаём новый объект вместо мутации существующего
+    // Это необходимо для того, чтобы Mongoose отследил изменение вложенного объекта
+    this.emailConfirmation = {
+      confirmationCode: code,
+      expirationDate: exp || this.emailConfirmation?.expirationDate || null,
+      isConfirmed: this.emailConfirmation?.isConfirmed || false,
+    };
   }
   //DDD сontinue: инкапсуляция (вызываем методы, которые меняют состояние\св-ва) объектов согласно правилам этого объекта
   update(dto: UpdateUserDto) {
@@ -114,6 +108,20 @@ export class User {
         ...this.emailConfirmation,
         isConfirmed: true,
       }
+    }
+  }
+
+  updatePassword(passwordHash: string, salt: string) {
+    this.passwordHash = passwordHash;
+    this.salt = salt;
+    
+    // Очищаем recovery code после успешного обновления пароля
+    if (this.emailConfirmation) {
+      this.emailConfirmation = {
+        ...this.emailConfirmation,
+        confirmationCode: null,
+        expirationDate: null,
+      };
     }
   }
 }

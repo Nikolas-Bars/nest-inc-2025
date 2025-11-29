@@ -17,6 +17,11 @@ export class UsersRepository {
   }
 
   async save(user: UserDocument) {
+    // // Явно указываем Mongoose, что вложенный объект emailConfirmation был изменён
+    // // Это необходимо, т.к. Mongoose не всегда отслеживает изменения вложенных объектов типа Object
+    // if (user.isModified('emailConfirmation') || user.emailConfirmation) {
+    //   user.markModified('emailConfirmation');
+    // }
     await user.save();
   }
 

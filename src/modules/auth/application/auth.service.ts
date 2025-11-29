@@ -80,7 +80,7 @@ export class AuthService {
 
   async passwordRecovery(email: string): Promise<void> {
     const user = await this.userExternalService.findByLoginOrEmail(email);
-    
+
     // Всегда возвращаем успех (204), даже если email не найден
     // Это предотвращает обнаружение зарегистрированных email-адресов
     if (!user) {
@@ -94,10 +94,35 @@ export class AuthService {
 
     // Обновляем код восстановления у пользователя
     user.setConfirmationCode(recoveryCode, exp);
-    await this.userExternalService.updateRecoveryCode(user);
+    await this.userExternalService.save(user);
 
     // Отправляем email с кодом восстановления
     await this.emailExternalService.sendRecoveryMail(email, 'Recovery code', recoveryCode);
+  }
+
+  async checkRecoveryCode(code: string, password: string): Promise<void> {
+    const user = await this.userExternalService.getUserByRecoveryCode(code);
+    console.log(111);
+    if (!user) {
+      return; // Всегда возвращаем успех для безопасности
+    }
+    console.log(222);
+    const expirationDate = user.emailConfirmation?.expirationDate || null;
+
+    // Проверяем, что код не истёк
+    if (!expirationDate || expirationDate < new Date()) {
+      return; // Код истёк, но возвращаем успех для безопасности
+    }
+    console.log(333);
+    // Создаём новый хэш пароля
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+    console.log(444);
+    // Обновляем пароль через метод entity (DDD подход)
+    user.updatePassword(passwordHash, salt);
+    console.log(555);
+    // Сохраняем изменения
+    await this.userExternalService.save(user);
   }
 
   // Проверка логина/пароля (используется в LocalStrategy)

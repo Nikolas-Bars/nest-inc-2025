@@ -66,7 +66,12 @@ export class UsersExternalService {
     await this.usersRepository.save(user);
   }
 
-  async updateRecoveryCode(user: UserDocument)  {
+  async save(user: UserDocument)  {
     await this.usersRepository.save(user);
+  }
+
+  async getUserByRecoveryCode(recoveryCode: string): Promise<UserDocument | null> {
+    console.log(recoveryCode, 666);
+    return await this.usersRepository.getByConfirmCode(recoveryCode);
   }
 }
