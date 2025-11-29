@@ -34,12 +34,9 @@ export class EmailExternalService {
 
   }
 
-  // async sendRecoveryMail(email: string, subject: string, code: string) {
-  //
-  //   const message = ` <h1>Password recovery</h1><a href=\'https://blog-t57v.onrender.com/password-recovery?recoveryCode=${code}\'>recovery password</a>`
-  //
-  //   const result: string | null = await this.sendMessage(email, subject, message)
-  //
-  //   return result
-  // }
+  async sendRecoveryMail(email: string, subject: string, code: string): Promise<boolean> {
+    const message = ` <h1>Password recovery</h1><a href=\'https://blog-t57v.onrender.com/password-recovery?recoveryCode=${code}\'>recovery password</a>`;
+
+    return await this.sendMessage({ path: email, subject, msg: message });
+  }
 }

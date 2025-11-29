@@ -65,4 +65,8 @@ export class UsersExternalService {
     user.confirmEmail();
     await this.usersRepository.save(user);
   }
+
+  async updateRecoveryCode(user: UserDocument)  {
+    await this.usersRepository.save(user);
+  }
 }

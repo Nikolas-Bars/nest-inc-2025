@@ -20,6 +20,7 @@ import { JwtAuthGuard } from '../infrastructure/guards/jwt-auth.guard';
 import { LoginInputDto } from './input-dto/login.input.dto';
 import { ConfirmationEmailInputDto } from '../dto/confirmation.email.input.dto';
 import { Throttle } from '@nestjs/throttler';
+import { RecoveryInputDto } from './input-dto/recovery.input.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -56,13 +57,13 @@ export class AuthController {
     const tokens = await this.authService.login(user.userId);
 
     res.cookie('accessToken', tokens.accessToken, {
-      httpOnly: true,   // Защита от XSS (JS не может прочитать)
-      secure: process.env.NODE_ENV === 'production',     // HTTPS только в проде
+      httpOnly: true, // Защита от XSS (JS не может прочитать)
+      secure: process.env.NODE_ENV === 'production', // HTTPS только в проде
       sameSite: 'lax', // Защита от CSRF (lax для localhost)
       maxAge: 15 * 60 * 1000, // 15 минут (как у токена)
     });
 
-    return tokens
+    return tokens;
   }
 
   @HttpCode(204)
@@ -74,9 +75,21 @@ export class AuthController {
     await this.authService.confirmCode(query.code);
   }
 
+  @HttpCode(204)
+  @Post("/password-recovery")
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  async recoveryPassword(@Body() body: RecoveryInputDto) {
+    // ValidationPipe автоматически проверит email (400 если невалидный)
+    // Throttle ограничит до 5 попыток за 10 секунд (429 если превышен)
+    // Всегда возвращает 204, даже если email не зарегистрирован (для безопасности)
+    await this.authService.passwordRecovery(body.email);
+  }
+
   // Тестовый защищённый маршрут для проверки JWT
   @Get('me')
   @UseGuards(JwtAuthGuard)
+  // JwtAuthGuard проверяет JWT-токен из запроса.
+  // Если токен валиден, JwtStrategy декодирует его и добавляет данные пользователя в request.user.
   async getMe(@ExtractUserFromRequest() user: UserContextDto) {
     return {
       message: 'JWT работает!',

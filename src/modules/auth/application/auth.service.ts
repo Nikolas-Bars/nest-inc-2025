@@ -4,7 +4,7 @@ import { RegistrationInputDto } from '../api/input-dto/registration.input-dto';
 import { RegisterUserDto } from '../dto/register.user.dto';
 import bcrypt from 'bcrypt';
 import {v1} from "uuid";
-import add from "date-fns/add"
+import { add } from "date-fns/add"
 import { CreateUserDto } from '../../user-accounts/dto/create-user.dto';
 import { UsersExternalService } from '../../user-accounts/application/users.external-service';
 import { SendEmailType } from '../../email/email.types';
@@ -37,7 +37,7 @@ export class AuthService {
         // confirmationCode - код который уйдет пользователю
         confirmationCode,
         // expirationDate - дата когда код устареет
-        expirationDate: add.add(new Date(), {
+        expirationDate: add(new Date(), {
           hours: 1,
           minutes: 30
         }),
@@ -76,6 +76,28 @@ export class AuthService {
 
   async checkPassword(password: string, passwordHash: string): Promise<boolean> {
     return await bcrypt.compare(password, passwordHash);
+  }
+
+  async passwordRecovery(email: string): Promise<void> {
+    const user = await this.userExternalService.findByLoginOrEmail(email);
+    
+    // Всегда возвращаем успех (204), даже если email не найден
+    // Это предотвращает обнаружение зарегистрированных email-адресов
+    if (!user) {
+      return;
+    }
+
+    const recoveryCode = v1();
+    const exp = add(new Date(), {
+      minutes: 3
+    });
+
+    // Обновляем код восстановления у пользователя
+    user.setConfirmationCode(recoveryCode, exp);
+    await this.userExternalService.updateRecoveryCode(user);
+
+    // Отправляем email с кодом восстановления
+    await this.emailExternalService.sendRecoveryMail(email, 'Recovery code', recoveryCode);
   }
 
   // Проверка логина/пароля (используется в LocalStrategy)

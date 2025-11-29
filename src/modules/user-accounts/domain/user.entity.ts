@@ -54,8 +54,13 @@ export class User {
     user.email = dto.email;
     user.passwordHash = dto.passwordHash;
     user.login = dto.login;
-    user.isEmailConfirmed = false; // пользователь ВСЕГДА должен после регистрации подтверждить свой Email
-    user.emailConfirmation = dto.emailConfirmation || null
+    user.isEmailConfirmed = false; // пользователь ВСЕГДА должен после регистрации подтвердить свой Email
+    user.emailConfirmation = dto.emailConfirmation || {
+      confirmationCode: null,
+      // expirationDate - дата когда код устареет
+      expirationDate: null,
+      isConfirmed: false
+    }
 
     user.name = {
       firstName: 'firstName xxx',
@@ -72,8 +77,20 @@ export class User {
     }
     this.deletedAt = new Date();
   }
-  setConfirmationCode(code: string) {
-    //logic
+  setConfirmationCode(code: string, exp?: Date) {
+    if (!this.emailConfirmation) {
+      this.emailConfirmation = {
+        confirmationCode: null,
+        expirationDate: null,
+        isConfirmed: false,
+      };
+    }
+
+    this.emailConfirmation.confirmationCode = code;
+
+    if (exp) {
+      this.emailConfirmation.expirationDate = exp;
+    }
   }
   //DDD сontinue: инкапсуляция (вызываем методы, которые меняют состояние\св-ва) объектов согласно правилам этого объекта
   update(dto: UpdateUserDto) {
