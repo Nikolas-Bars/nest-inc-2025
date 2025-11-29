@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { UsersQueryRepository } from '../infrastructure/query/users.query-repository';
@@ -20,6 +21,7 @@ import { ApiParam } from '@nestjs/swagger';
 import { UpdateUserInputDto } from './input-dto/update-user.input-dto';
 import { GetUsersQueryParams } from './input-dto/get-users-query-params.input-dto';
 import { CreateUserPipe } from './pipes/create.user.pipe';
+import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -39,6 +41,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getAll(
     @Query() query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UserViewDto[]>> {
@@ -47,6 +50,7 @@ export class UsersController {
 
   @Post()
   @UsePipes(CreateUserPipe)
+  @UseGuards(JwtAuthGuard)
   async createUser(@Body() body: CreateUserInputDto): Promise<UserViewDto> {
     const userId = await this.usersService.createUser(body);
 
@@ -65,6 +69,7 @@ export class UsersController {
 
   @ApiParam({ name: 'id' }) //для сваггера
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string): Promise<void> {
     return this.usersService.deleteUser(id);
