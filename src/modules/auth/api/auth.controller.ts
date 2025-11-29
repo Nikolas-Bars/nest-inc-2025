@@ -22,6 +22,7 @@ import { ConfirmationEmailInputDto } from '../dto/confirmation.email.input.dto';
 import { Throttle } from '@nestjs/throttler';
 import { RecoveryInputDto } from './input-dto/recovery.input.dto';
 import { NewPasswordInputDto } from './input-dto/new-password.input.dto';
+import { ResendEmailInputDto } from './input-dto/resend-email.input.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -55,7 +56,7 @@ export class AuthController {
     }
 
     // 3. Генерируем JWT-токен для этого userId
-    const tokens = await this.authService.login(user.userId);
+    const tokens = await this.authService.login(user.userId, user.email, user.login);
 
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true, // Защита от XSS (JS не может прочитать)
@@ -70,7 +71,6 @@ export class AuthController {
   @HttpCode(204)
   @Post('registration-confirmation')
   @Throttle({ default: { limit: 3, ttl: 10000 } })
-  @UseGuards(JwtAuthGuard)
   async confirmationCode(@Query() query: ConfirmationEmailInputDto) {
     // ValidationPipe автоматически проверит query.code
     await this.authService.confirmCode(query.code);
@@ -93,6 +93,13 @@ export class AuthController {
     await this.authService.checkRecoveryCode(body.recoveryCode, body.newPassword);
   }
 
+  @HttpCode(204)
+  @Post("/registration-email-resending")
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  async resendRegistrationEmail(@Body() body: ResendEmailInputDto) {
+    await this.authService.resendConfirmationCode(body.email);
+  }
+
   // Тестовый защищённый маршрут для проверки JWT
   @Get('me')
   @UseGuards(JwtAuthGuard)
@@ -100,11 +107,9 @@ export class AuthController {
   // Если токен валиден, JwtStrategy декодирует его и добавляет данные пользователя в request.user.
   async getMe(@ExtractUserFromRequest() user: UserContextDto) {
     return {
-      message: 'JWT работает!',
-      user: {
         userId: user.userId,
         login: user.login,
-      },
+        email: user.email,
     };
   }
 }
