@@ -11,7 +11,11 @@ import { SecurityDevicesController } from './api/security-devices.controller';
 import { UsersExternalQueryRepository } from './infrastructure/external-query/users.external-query-repository';
 import { UsersExternalService } from './application/users.external-service';
 import { CreateUserPipe } from './api/pipes/create.user.pipe';
+import { CreateUserUseCase } from './application/use-cases/create-user-use-case';
+import { UpdateUserUseCase } from './application/use-cases/update-user-use-case';
+import { DeleteUserUseCase } from './application/use-cases/delete-user-use-case';
 
+const useCases = [CreateUserUseCase, UpdateUserUseCase, DeleteUserUseCase]
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
@@ -25,6 +29,7 @@ import { CreateUserPipe } from './api/pipes/create.user.pipe';
     SecurityDevicesQueryRepository,
     UsersExternalQueryRepository,
     UsersExternalService,
+    ...useCases
   ],
   exports: [UsersExternalQueryRepository, UsersExternalService],
 })
