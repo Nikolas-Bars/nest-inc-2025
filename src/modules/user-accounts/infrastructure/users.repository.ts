@@ -3,11 +3,16 @@ import type { UserModelType } from '../domain/user.entity';
 import { User, UserDocument } from '../domain/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfirmationEmailInputDto } from '../../auth/dto/confirmation.email.input.dto';
+import { CreateUserDomainDto } from '../domain/dto/create-user.domain.dto';
 
 @Injectable()
 export class UsersRepository {
   //инжектирование модели через DI
   constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
+
+  create(dto: CreateUserDomainDto): UserDocument {
+    return this.UserModel.createInstance(dto);
+  }
 
   async findById(id: string): Promise<UserDocument | null> {
     return this.UserModel.findOne({

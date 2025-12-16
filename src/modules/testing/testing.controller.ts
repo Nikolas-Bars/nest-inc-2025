@@ -11,10 +11,15 @@ export class TestingController {
   @Delete('all-data')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAll() {
-    const collections = await this.databaseConnection.listCollections();
+    const db = this.databaseConnection.db;
+    if (!db) {
+      throw new Error('Database connection is not available');
+    }
+    
+    const collections = await db.listCollections().toArray();
 
-    const promises = collections.map((collection) =>
-      this.databaseConnection.collection(collection.name).deleteMany({}),
+    const promises = collections.map((collectionInfo) =>
+      db.collection(collectionInfo.name).deleteMany({}),
     );
     await Promise.all(promises);
   }
