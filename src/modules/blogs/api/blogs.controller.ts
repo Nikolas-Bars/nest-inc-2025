@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
 import { BlogsQueryRepository } from '../infrastructure/query/blogs.query-repository';
 import { GetBlogsQueryParams } from './input-dto/get-blogs-query-params.input-dto';
@@ -16,6 +28,8 @@ import {
   CreatePostExternalServiceDto,
 } from '../../posts/api/input-dto/posts.external-input-dto';
 import { PostsExternalService } from '../../posts/application/posts.external-service';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -50,6 +64,7 @@ export class BlogsController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(@Body() body: CreateBlogInputDto): Promise<BlogViewDto> {
     const newBlogId = await this.blogsService.createBlog(body);
 
@@ -72,12 +87,14 @@ export class BlogsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard)
   async updateBlog(@Param('id') id: string, @Body() body: CreateBlogInputDto) {
     return await this.blogsService.update(id, body);
   }
 
   @ApiParam({ name: 'id' })
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {
     return this.blogsService.deleteBlog(id);
