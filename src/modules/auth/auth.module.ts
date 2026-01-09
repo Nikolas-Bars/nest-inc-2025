@@ -17,8 +17,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
     PassportModule,
     EmailModule,
     ThrottlerModule.forRoot([{
-      ttl: 10000,  // 10 секунд
-      limit: 5,    // 5 попыток
+      ttl: 10000,  // 10 секунд (время окна по умолчанию)
+      limit: 5,    // 5 попыток (лимит по умолчанию, можно переопределить через @Throttle)
     }]),
     JwtModule.registerAsync({
       useFactory: () => ({

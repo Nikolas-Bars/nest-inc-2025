@@ -10,6 +10,7 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { RegistrationInputDto } from './input-dto/registration.input-dto';
@@ -19,16 +20,17 @@ import { UserContextDto } from '../application/user-context.dto';
 import { JwtAuthGuard } from '../infrastructure/guards/jwt-auth.guard';
 import { LoginInputDto } from './input-dto/login.input.dto';
 import { ConfirmationEmailInputDto } from '../dto/confirmation.email.input.dto';
-import { Throttle } from '@nestjs/throttler';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { RecoveryInputDto } from './input-dto/recovery.input.dto';
 import { NewPasswordInputDto } from './input-dto/new-password.input.dto';
 import { ResendEmailInputDto } from './input-dto/resend-email.input.dto';
+import { RegistrationUserPipe } from './pipes/registration.user.pipe';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  //@UsePipes(RegistrationUserPipe)
+  @UsePipes(RegistrationUserPipe)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('/registration')
   async registration(@Body() body: RegistrationInputDto) {
@@ -71,6 +73,7 @@ export class AuthController {
   @HttpCode(204)
   @Post('registration-confirmation')
   @Throttle({ default: { limit: 3, ttl: 10000 } })
+  @UseGuards(ThrottlerGuard)
   async confirmationCode(@Query() query: ConfirmationEmailInputDto) {
     // ValidationPipe автоматически проверит query.code
     await this.authService.confirmCode(query.code);
@@ -79,6 +82,7 @@ export class AuthController {
   @HttpCode(204)
   @Post("/password-recovery")
   @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @UseGuards(ThrottlerGuard)
   async recoveryPassword(@Body() body: RecoveryInputDto) {
     // ValidationPipe автоматически проверит email (400 если невалидный)
     // Throttle ограничит до 5 попыток за 10 секунд (429 если превышен)
@@ -89,6 +93,7 @@ export class AuthController {
   @HttpCode(204)
   @Post("/new-password")
   @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @UseGuards(ThrottlerGuard)
   async newPassword(@Body() body: NewPasswordInputDto) {
     await this.authService.checkRecoveryCode(body.recoveryCode, body.newPassword);
   }
@@ -96,13 +101,15 @@ export class AuthController {
   @HttpCode(204)
   @Post("/registration-email-resending")
   @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @UseGuards(ThrottlerGuard)
   async resendRegistrationEmail(@Body() body: ResendEmailInputDto) {
     await this.authService.resendConfirmationCode(body.email);
   }
 
-  // Тестовый защищённый маршрут для проверки JWT
   @Get('me')
-  @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @UseGuards(ThrottlerGuard, JwtAuthGuard)
+  // ThrottlerGuard проверяет ограничение (4 запроса за 10 секунд)
   // JwtAuthGuard проверяет JWT-токен из запроса.
   // Если токен валиден, JwtStrategy декодирует его и добавляет данные пользователя в request.user.
   async getMe(@ExtractUserFromRequest() user: UserContextDto) {
