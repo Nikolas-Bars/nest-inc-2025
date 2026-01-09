@@ -29,7 +29,7 @@ import {
 } from '../../posts/api/input-dto/posts.external-input-dto';
 import { PostsExternalService } from '../../posts/application/posts.external-service';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
+//import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -64,7 +64,7 @@ export class BlogsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async create(@Body() body: CreateBlogInputDto): Promise<BlogViewDto> {
     const newBlogId = await this.blogsService.createBlog(body);
 
@@ -87,14 +87,14 @@ export class BlogsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   async updateBlog(@Param('id') id: string, @Body() body: CreateBlogInputDto) {
     return await this.blogsService.update(id, body);
   }
 
   @ApiParam({ name: 'id' })
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {
     return this.blogsService.deleteBlog(id);

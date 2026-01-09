@@ -1,5 +1,5 @@
 //dto для боди при создании юзера. Сюда могут быть добавлены декораторы swagger
-import { IsString, isString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateBlogInputDto {
   @IsString({ message: 'name must be a string' })
