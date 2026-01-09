@@ -6,6 +6,7 @@ export class BlogViewDto {
   description: string;
   createdAt: Date;
   websiteUrl: string;
+  isMembership: boolean;
 
   static mapToView(blog: BlogDocument): BlogViewDto {
     const dto = new BlogViewDto();
@@ -15,6 +16,7 @@ export class BlogViewDto {
     dto.id = blog._id.toString();
     dto.createdAt = blog.createdAt;
     dto.websiteUrl = blog.websiteUrl;
+    dto.isMembership = blog.isMembership
 
     return dto;
   }

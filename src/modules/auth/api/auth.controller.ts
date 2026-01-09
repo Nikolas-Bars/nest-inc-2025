@@ -10,6 +10,7 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { RegistrationInputDto } from './input-dto/registration.input-dto';
@@ -23,12 +24,13 @@ import { Throttle } from '@nestjs/throttler';
 import { RecoveryInputDto } from './input-dto/recovery.input.dto';
 import { NewPasswordInputDto } from './input-dto/new-password.input.dto';
 import { ResendEmailInputDto } from './input-dto/resend-email.input.dto';
+import { RegistrationUserPipe } from './pipes/registration.user.pipe';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  //@UsePipes(RegistrationUserPipe)
+  @UsePipes(RegistrationUserPipe)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('/registration')
   async registration(@Body() body: RegistrationInputDto) {
@@ -100,7 +102,6 @@ export class AuthController {
     await this.authService.resendConfirmationCode(body.email);
   }
 
-  // Тестовый защищённый маршрут для проверки JWT
   @Get('me')
   @UseGuards(JwtAuthGuard)
   // JwtAuthGuard проверяет JWT-токен из запроса.

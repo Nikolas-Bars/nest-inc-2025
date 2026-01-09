@@ -2,7 +2,7 @@ import { IsString, Length } from 'class-validator';
 
 export class LoginInputDto {
   @IsString({ message: 'loginOrEmail must be a string' })
-  @Length(5, 16, { message: 'loginOrEmail must be between 6 and 16 characters' })
+  @Length(5, 100, { message: 'loginOrEmail must be between 5 and 100 characters' })
   loginOrEmail: string;
 
   @IsString({ message: 'password must be a string' })

@@ -80,7 +80,7 @@ export class AuthService {
 
   async passwordRecovery(email: string): Promise<void> {
     const user = await this.userExternalService.findByLoginOrEmail(email);
-
+    console.log(user, 'userrrrrrr');
     // Всегда возвращаем успех (204), даже если email не найден
     // Это предотвращает обнаружение зарегистрированных email-адресов
     if (!user) {
