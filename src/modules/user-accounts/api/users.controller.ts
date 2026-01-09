@@ -26,6 +26,7 @@ import { CreateUserUseCase } from '../application/use-cases/create-user-use-case
 import { UpdateUserUseCase } from '../application/use-cases/update-user-use-case';
 import { DeleteUserUseCase } from '../application/use-cases/delete-user-use-case';
 import { ParseObjectIdPipe } from '../../../core/pipes/parse-objectid.pipe';
+import { BasicAuthGuard } from '../../../core/guards/basic-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -48,7 +49,7 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async getAll(
     @Query() query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UserViewDto[]>> {
@@ -57,7 +58,7 @@ export class UsersController {
 
   @Post()
   @UsePipes(CreateUserPipe)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async createUser(@Body() body: CreateUserInputDto): Promise<UserViewDto> {
     const userId = await this.createUserUseCase.execute(body);
 
@@ -75,7 +76,7 @@ export class UsersController {
 
   @ApiParam({ name: 'id' }) //для сваггера
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {
     return await this.deleteUserUseCase.execute(id);
