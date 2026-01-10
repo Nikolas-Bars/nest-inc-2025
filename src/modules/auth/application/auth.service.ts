@@ -68,9 +68,16 @@ export class AuthService {
       expiresIn: '15m',
       secret: process.env.JWT_ACCESS_SECRET || 'secret',
     });
+    const deviceId = v1()
+    const refreshToken = this.jwtService.sign(
+      {userId: userId, deviceId: deviceId}, {
+        expiresIn: '15m',
+        secret: process.env.JWT_ACCESS_SECRET || 'secret',
+      }
+    )
 
     return {
-      accessToken,
+      accessToken, refreshToken
     };
   }
 
