@@ -67,6 +67,8 @@ export class AuthController {
       maxAge: 15 * 60 * 1000, // 15 минут (как у токена)
     });
 
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true })
+
     return tokens;
   }
 
