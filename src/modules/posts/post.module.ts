@@ -9,11 +9,13 @@ import { BlogsModule } from '../blogs/blogs.module';
 import { CommentsModule } from '../comments/comments.module';
 import { PostsQueryExternalRepository } from './infrastructure/external-query/posts.query-external-repository';
 import { PostsExternalService } from './application/posts.external-service';
+import { LikePostModule } from '../like-posts/like-post.module';
 
 @Module({
   imports: [
     forwardRef(() => BlogsModule),
     CommentsModule,
+    LikePostModule,
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
   ],
   controllers: [PostsController],
