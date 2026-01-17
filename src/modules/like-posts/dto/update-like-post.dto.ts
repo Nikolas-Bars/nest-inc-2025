@@ -1,7 +1,5 @@
 import { LikePostStatusEnum } from '../domain/like-post-type';
 
-export class CreateLikePostDto {
-  userId: string;
-  postId: string;
+export class UpdateLikePostDto {
   status: LikePostStatusEnum;
 }

@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import {
-  LikePostDomainDto,
-  UpdateLikePostDomainDto,
+  CreateLikePostDomainDto,
+  UpdateCreateLikePostDomainDto,
 } from './dto/like-post.domain.dto';
 import { LikePostStatusEnum } from './like-post-type';
 
@@ -31,7 +31,7 @@ export class LikePost {
   }
 
   //DDD started: как создать сущность, чтобы она не нарушала бизнес-правила? Делегируем это создание статическому методу
-  static createInstance(dto: LikePostDomainDto): LikePostDocument {
+  static createInstance(dto: CreateLikePostDomainDto): LikePostDocument {
     const likePost = new this();
     likePost.postId = dto.postId;
     likePost.status = dto.status;
@@ -47,13 +47,7 @@ export class LikePost {
     }
     this.deletedAt = new Date();
   }
-  update(dto: UpdateLikePostDomainDto) {
-    if(dto.userId) {
-      this.userId = dto.userId;
-    }
-    if(dto.postId) {
-      this.postId = dto.postId;
-    }
+  update(dto: UpdateCreateLikePostDomainDto) {
     this.status = dto.status;
   }
 }

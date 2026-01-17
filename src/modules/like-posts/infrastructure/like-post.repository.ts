@@ -2,7 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { LikePost, LikePostDocument } from '../domain/like-post.entity';
 import type { LikePostModelType } from '../domain/like-post.entity';
-import { LikePostDomainDto } from '../domain/dto/like-post.domain.dto';
+import { CreateLikePostDomainDto } from '../domain/dto/like-post.domain.dto';
 
 @Injectable()
 export class LikePostRepository {
@@ -11,7 +11,7 @@ export class LikePostRepository {
     @InjectModel(LikePost.name) private LikePostModel: LikePostModelType,
   ) {}
 
-  create(dto: LikePostDomainDto): LikePostDocument {
+  create(dto: CreateLikePostDomainDto): LikePostDocument {
     return this.LikePostModel.createInstance(dto);
   }
 

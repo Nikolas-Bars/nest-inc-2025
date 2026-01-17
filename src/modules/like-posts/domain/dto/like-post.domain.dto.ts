@@ -1,13 +1,11 @@
 import { LikePostStatusEnum } from '../like-post-type';
 
-export class LikePostDomainDto {
+export class CreateLikePostDomainDto {
   userId: string;
   postId: string;
   status: LikePostStatusEnum;
 }
 
-export class UpdateLikePostDomainDto {
-  userId?: string;
-  postId?: string;
+export class UpdateCreateLikePostDomainDto {
   status: LikePostStatusEnum;
 }
